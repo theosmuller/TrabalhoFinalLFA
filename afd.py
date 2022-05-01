@@ -11,14 +11,22 @@ class Delta(NamedTuple):
     input: DeltaInput
     output: str
 
-class Afd(NamedTuple):
+class FA(NamedTuple):
     states: List[str]
     inputSymbols: List[str]
     programFunction: List[Delta]
     initialState: str
 
 def afd_from_glud(glud):
-    return Afd(
+    afne = afne_from_glud(glud)
+    for state in afne.states[:-1] :
+        empty_closure(state, afne.programFunction)
+    return afne
+
+
+def afne_from_glud(glud):
+    glud.gludDefinition.variables.append("qf")
+    return FA(
         states = glud.gludDefinition.variables,
         inputSymbols = glud.gludDefinition.terminals,
         initialState = glud.gludDefinition.initialSymbol,
@@ -39,7 +47,7 @@ def production_to_delta(production):
             currentState = production.input,
             inputSymbol = production.output[0]
         ),
-        output = production.input
+        output = "qf"
     )
     return Delta(
         input = DeltaInput(
@@ -53,3 +61,14 @@ def stateIsFinal(outputState):
     if (outputState == "λ"):
         return True
     return False
+
+def empty_closure(state, listofdelta):
+    emptyClosure = [state]
+    for delta in listofdelta:
+        if (delta.input.currentState == state and delta.input.inputSymbol == "λ"):
+            if delta.output != "λ":
+                emptyClosure.append(delta.output)
+            else:
+                emptyClosure.append("qf")
+    print(emptyClosure)
+    return emptyClosure

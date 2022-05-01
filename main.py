@@ -1,4 +1,4 @@
-from glud import get_GLUD_from_file, validate_word
+from glud import get_GLUD_from_file, validate_list, validate_word
 from afd import afd_from_glud
 from aceitarejeita import nojeira
 '''f = open("input.txt", "r")
@@ -16,9 +16,10 @@ def main():
     afn = afd_from_glud(glud)
     print(afn)
 
-    print(validate_word("ab", glud)) 
-    print(validate_word("abb", glud))
-    print("EXPECTED: true, false")
+
+    words = ["ab", "abb", "abcb", "baba"]
+
+    print(validate_list(words, glud))
 
     icecreammachine = get_GLUD_from_file("GLUD formato de entrada definido.txt")
     print(icecreammachine.gludDefinition.initialSymbol)

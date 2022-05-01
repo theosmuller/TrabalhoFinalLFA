@@ -83,10 +83,7 @@ def replace_empty(productionOutput, variables):
             return (("λ")+productionOutput)
         return (productionOutput+("λ"))
     return productionOutput
-
-
-
-
+        
 
 
 def validate_word(word, glud):
@@ -118,3 +115,12 @@ def word_validation_recursive(word, glud, currentState):
                     return True
     return False
         
+
+def validate_list(words, glud):
+    acceptedwords = []
+    for word in words:
+        if validate_word(word, glud):
+            acceptedwords.append(word)
+    return acceptedwords
+
+            

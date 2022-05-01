@@ -1,8 +1,8 @@
-MinhaGLUD=({A,B,C},{a,b,c},prod,A)
+MinhaGLUD=({A,B,C,D},{a,b,c},prod,A)
 prod
 A -> aB
 B -> bC
 A -> b
 C -> D
 C -> cA
-D -> D
+D ->
