@@ -1,3 +1,4 @@
+from asyncio.format_helpers import _format_callback_source
 from os import stat
 from typing import List, NamedTuple, Dict
 import re
@@ -19,9 +20,8 @@ class FA(NamedTuple):
 
 def afd_from_glud(glud):
     afne = afne_from_glud(glud)
-    for state in afne.states[:-1] :
-        empty_closure(state, afne.programFunction)
-    return afne
+    print(afne_to_afd(afne.initialState, afne.programFunction, afne.inputSymbols))
+    
 
 
 def afne_from_glud(glud):
@@ -62,13 +62,80 @@ def stateIsFinal(outputState):
         return True
     return False
 
-def empty_closure(state, listofdelta):
-    emptyClosure = [state]
-    for delta in listofdelta:
-        if (delta.input.currentState == state and delta.input.inputSymbol == "λ"):
-            if delta.output != "λ":
-                emptyClosure.append(delta.output)
-            else:
-                emptyClosure.append("qf")
-    print(emptyClosure)
+def empty_closure(states, listofdelta):
+    emptyClosure = []
+    for state in states:
+        emptyClosure.append(state)
+        for delta in listofdelta:
+            if (delta.input.currentState == state and delta.input.inputSymbol == "λ"):
+                if delta.output != "λ":
+                    emptyClosure.append(delta.output)
+                else:
+                    emptyClosure.append("qf")
     return emptyClosure
+
+# recebe: 
+# lista de estados (vai ser chamado com o estado inicial do AFV)
+# função programa (todas as transições do AFV)
+# alfabeto (simbolos)
+#  
+# DEVERIA:
+# fazer o fecho fazio do estado 
+# para cada simbolo do alfabeto :
+# encontrar as transições desse fecho vazio
+# se não tem transições adiciona à lista de transições do AFD esse fecho vazio indo para o novo qf
+# se tem, faz tudo isso pro novo conjunto de estados atingidos por essas transições
+# adiciona à lista essa transição
+# quando n tem transições retorna a lista do afd
+def afne_to_afd(states, programFunction, alphabet):
+    transitions = []
+    newInitialState = empty_closure(states, programFunction)
+    for symbol in alphabet: 
+        reachedStates = []
+        for delta in programFunction:
+            if delta.input.currentState in newInitialState and symbol == delta.input.inputSymbol:
+                if delta.output not in reachedStates:
+                    reachedStates.append(delta.output)
+                
+        if reachedStates != newInitialState:
+            if reachedStates == []:
+                newInitialState.remove("qf")
+                transitions.append(
+                    Delta(
+                        input = DeltaInput(
+                            currentState = "".join(newInitialState),
+                            inputSymbol = symbol
+                            ),
+                            output = "qf"
+                    )
+
+                )
+                return transitions
+            else:
+                transitions.append(
+                    Delta(
+                        input = DeltaInput(
+                        currentState = "".join(newInitialState),
+                        inputSymbol = symbol
+                        ),
+                        output = "".join(reachedStates)
+                    )
+                    
+                )
+                '''transitions.append(
+                    Delta(
+                        input = DeltaInput(
+                        currentState = "".join(reachedStates),
+                        inputSymbol = symbol
+                        ),
+                        output = empty_closure(reachedStates, programFunction)
+                    )
+                    
+                )'''
+                if reachedStates != states:
+                    transitions.extend(afne_to_afd(reachedStates, programFunction, alphabet))
+                
+    return(transitions)
+                
+    
+

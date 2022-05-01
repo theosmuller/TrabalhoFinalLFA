@@ -13,8 +13,11 @@ for line in f:
 def main():
     glud = get_GLUD_from_file("input.txt")
     print (glud)
-    afn = afd_from_glud(glud)
-    print(afn)
+    #afn = afd_from_glud(glud)
+    #print(afn)
+    gludtest = get_GLUD_from_file("test.txt")
+    print("\n\n\n RESULTADO DA CONVERSÃO DE AFV PARA AFD:\n\n\n")
+    print (afd_from_glud(gludtest))
 
 
     words = ["ab", "abb", "abcb", "baba"]
