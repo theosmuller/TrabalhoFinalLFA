@@ -15,12 +15,12 @@ class Delta(NamedTuple):
 class FA(NamedTuple):
     states: List[str]
     inputSymbols: List[str]
-    programFunction: List[Delta]
+    programFunction: set[Delta]
     initialState: str
 
 def afd_from_glud(glud):
     afne = afne_from_glud(glud)
-    print(afne_to_afd(afne.initialState, afne.programFunction, afne.inputSymbols))
+    return afne_to_afd(afne.initialState, afne.programFunction, afne.inputSymbols)
     
 
 
@@ -34,10 +34,10 @@ def afne_from_glud(glud):
     )
 
 def get_program_function_from_productions(productions):
-    listOfDelta = []
+    setOfDelta = set()
     for production in productions:
-        listOfDelta.append(production_to_delta(production))
-    return listOfDelta
+        setOfDelta.add(production_to_delta(production))
+    return setOfDelta
 
 
 def production_to_delta(production):
@@ -74,6 +74,38 @@ def empty_closure(states, listofdelta):
                     emptyClosure.append("qf")
     return emptyClosure
 
+
+
+def clean_afd(afnInitialState, transitions, alphabet):
+    states = []
+    states.append("qf")
+    for transition in transitions:
+        if transition.output == afnInitialState:
+            transitions = list(filter(lambda val: val != transition, transitions))
+        if transition.input.currentState not in states:
+            states.append(transition.input.currentState)
+    for state in states:
+        for symbol in alphabet:
+            if not any(transition.input.inputSymbol == symbol and transition.input.currentState == state for transition in transitions):
+                transitions.append(
+                    Delta(
+                        input =  DeltaInput(
+                            currentState = state,
+                            inputSymbol = symbol
+                        ),
+                        output = state
+                    )
+                )
+    cleanTransitions = set()
+    cleanTransitions.update(transitions)
+    return FA(
+        states = states,
+        inputSymbols = alphabet,
+        programFunction = sorted(cleanTransitions),
+        initialState = empty_closure(afnInitialState, transitions)
+    )
+
+
 # recebe: 
 # lista de estados (vai ser chamado com o estado inicial do AFV)
 # função programa (todas as transições do AFV)
@@ -87,7 +119,8 @@ def empty_closure(states, listofdelta):
 # se tem, faz tudo isso pro novo conjunto de estados atingidos por essas transições
 # adiciona à lista essa transição
 # quando n tem transições retorna a lista do afd
-def afne_to_afd(states, programFunction, alphabet):
+
+def afd_program_function(states, programFunction, alphabet):
     transitions = []
     newInitialState = empty_closure(states, programFunction)
     for symbol in alphabet: 
@@ -99,7 +132,8 @@ def afne_to_afd(states, programFunction, alphabet):
                 
         if reachedStates != newInitialState:
             if reachedStates == []:
-                newInitialState.remove("qf")
+                if ("qf" in newInitialState):
+                    newInitialState.remove("qf")
                 transitions.append(
                     Delta(
                         input = DeltaInput(
@@ -110,7 +144,7 @@ def afne_to_afd(states, programFunction, alphabet):
                     )
 
                 )
-                return transitions
+
             else:
                 transitions.append(
                     Delta(
@@ -122,6 +156,7 @@ def afne_to_afd(states, programFunction, alphabet):
                     )
                     
                 )
+            
                 '''transitions.append(
                     Delta(
                         input = DeltaInput(
@@ -132,10 +167,22 @@ def afne_to_afd(states, programFunction, alphabet):
                     )
                     
                 )'''
-                if reachedStates != states:
-                    transitions.extend(afne_to_afd(reachedStates, programFunction, alphabet))
                 
+
+                #PRIMEIRAS DUAS PRODUÇÕES SÃO INUTEIS
+                #TA COLOCANDO DUAS VEZES AS PRODUÇÕES (EXCETO AS PRIMEIRAS DUAS Q SÃO INUTEIS)
+                #FALTA SER TRANSITIVO (TODOS OS ESTADOS APONTAREM PRA ALGO PRA TODOS OS SIMBOLOS)
+
+
+                if reachedStates != states:
+                    transitions.extend(afd_program_function(reachedStates, programFunction, alphabet))
+    #transitions = list(set(transitions))
     return(transitions)
                 
-    
+# cria primeiro a função programa do afd
+# depois acrescenta as transições faltantes
+# para tratar todos os simbolos do alfabeto    
+def afne_to_afd(initialState, programFunction, alphabet):
+    dirtyAfd = afd_program_function(initialState, programFunction, alphabet)
+    return clean_afd(initialState, dirtyAfd, alphabet)
 

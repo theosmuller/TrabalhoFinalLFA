@@ -17,7 +17,13 @@ def main():
     #print(afn)
     gludtest = get_GLUD_from_file("test.txt")
     print("\n\n\n RESULTADO DA CONVERSÃO DE AFV PARA AFD:\n\n\n")
-    print (afd_from_glud(gludtest))
+    afd = afd_from_glud(gludtest)
+    print("STATES:")
+    print(afd.states)
+    print("\nTRANSITIONS")
+
+    for delta in afd.programFunction:
+        print (delta)
 
 
     words = ["ab", "abb", "abcb", "baba"]
