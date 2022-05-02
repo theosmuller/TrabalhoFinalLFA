@@ -15,7 +15,7 @@ from graphviz import Digraph
 
 class FA():
     def __init__(self, stateCount, states, alphabetCount, alphabet, initialState,
-                 transitionCount, transitions):
+                finalState, transitionCount, transitions):
         self.stateCount = stateCount
         self.states = states
         self.alphabetCount = alphabetCount
@@ -24,11 +24,10 @@ class FA():
         self.alphabet.append('λ')
         self.alphabetCount += 1
         self.initialState = initialState
-        self.finalState = ('qf')
+        self.finalState = finalState
         self.transitionCount = transitionCount
         self.transitions = transitions
         self.graph = Digraph()
-
         self.states_dict = dict()
         for i in range(self.stateCount):
             self.states_dict[self.states[i]] = i
@@ -46,9 +45,10 @@ class FA():
                                       self.transitions[i][1]])].append(
                                           self.states_dict[self.transitions[i][2]])
     @classmethod
+
     def isFinalAFD(self, stateList):
         for x in stateList:
-            if (x == 'qf'):
+            if (x == 'q'):
                 return True
         return False
     def getStateName(self, stateList):
@@ -75,11 +75,14 @@ def afd_from_glud(glud):
     afne = afne_from_glud(glud)
     return afne_to_afd(afne)
     
-
+def afne_plus_graph(glud):
+    afne = afne_from_glud(glud)
+    return show_afne_graph(afne)
 
 def afne_from_glud(glud):
     glud.gludDefinition.variables.append("qf")
     return FA(
+        finalState = 'qf',
         states = glud.gludDefinition.variables,
         stateCount = len(glud.gludDefinition.variables),
         alphabet = glud.gludDefinition.terminals,
@@ -166,7 +169,8 @@ def afd_convert_and_graph(afne):
                     afdStack.append(list(toState))
                     afdStates.append(list(toState))
 
-                    if (afne.isFinalAFD(list(toState))):
+                    isFinal = (afne.getStateName(list(toState)))
+                    if (afne.isFinalAFD(isFinal)):
                         afdGraph.attr('node', shape='doublecircle')
                     else:
                         afdGraph.attr('node', shape='circle')
@@ -195,67 +199,33 @@ def afd_convert_and_graph(afne):
 
             
 
-
-
-    '''for delta in programFunction:
-        if delta.input.currentState in newInitialState and any(s == delta.input.inputSymbol for s in alphabet):
-            if delta.output not in reachedStates:
-                reachedStates.append(delta.output)
-                reachedStatesAndSymbols.append(StateSymbol(
-                    state = delta.output,
-                    symbol = delta.input.inputSymbol
-                ))
-                
-            
-    if reachedStates != newInitialState:
-        if reachedStates == []:
-            if ("qf" in newInitialState):
-                newInitialState.remove("qf")
-            transitions.append(
-                Delta(
-                    input = DeltaInput(
-                        currentState = "".join(newInitialState),
-                        inputSymbol = symbol
-                        ),
-                        output = "qf"
-                )
-
-            )
-
+def show_afne_graph(afne):
+    afne.graph = Digraph()
+ 
+    # Adding states/nodes in afne diagram
+    for x in afne.states:
+        # If state is not a final state, then border shape is single circle
+        # Else it is double circle
+        if (x != afne.finalState):
+            afne.graph.attr('node', shape='circle')
+            afne.graph.node(x)
         else:
-            transitions.append(
-                Delta(
-                    input = DeltaInput(
-                    currentState = "".join(newInitialState),
-                    inputSymbol = symbol
-                    ),
-                    output = "".join(reachedStates)
-                )
-                
-            )
-        
-            ''transitions.append(
-                Delta(
-                    input = DeltaInput(
-                    currentState = "".join(reachedStates),
-                    inputSymbol = symbol
-                    ),
-                    output = empty_closure(reachedStates, programFunction)
-                )
-                
-            )''
-            
-
-            #PRIMEIRAS DUAS PRODUÇÕES SÃO INUTEIS
-            #TA COLOCANDO DUAS VEZES AS PRODUÇÕES (EXCETO AS PRIMEIRAS DUAS Q SÃO INUTEIS)
-            #FALTA SER TRANSITIVO (TODOS OS ESTADOS APONTAREM PRA ALGO PRA TODOS OS SIMBOLOS)
+            afne.graph.attr('node', shape='doublecircle')
+            afne.graph.node(x)
+    
+    # Adding start state arrow in afne diagram
+    afne.graph.attr('node', shape='none')
+    afne.graph.node('')
+    afne.graph.edge('', afne.initialState)
+    
+    # Adding edge between states in afne from the transitions array
+    for x in afne.transitions:
+        afne.graph.edge(x[0], x[2], label=('ε', x[1])[x[1] != 'λ'])
+    
+    # Makes a pdf with name afne.graph.pdf and views the pdf
+    afne.graph.render('AFNE', view=True)
 
 
-            if reachedStates != states:
-                transitions.extend(afd_program_function(reachedStates, programFunction, alphabet))
-    #transitions = list(set(transitions))
-    return(transitions)'''
-                
 # cria primeiro a função programa do afd
 # depois acrescenta as transições faltantes
 # para tratar todos os simbolos do alfabeto    
