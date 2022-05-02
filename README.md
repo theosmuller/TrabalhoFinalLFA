@@ -9,13 +9,11 @@
 
 ---
 ## Como usar
-1\. Baixar o [Graphviz](https://graphviz.org/download/)
+1\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
 
-2\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
+2\. Rodar *main.exe*
 
-3\. Rodar *main.exe*
-
-4\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
+3\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
 
 ---
 ## Bibliotecas utilizadas
