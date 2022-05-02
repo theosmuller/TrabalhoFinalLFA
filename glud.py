@@ -150,9 +150,11 @@ def read_words_from_file(file):
 def createGraph(glud):
     graph = nx.DiGraph()
     for production in glud.productions:
+        # Estado inicial
         prod_input = production[0]
+        # Próximo estado
         prod_output = production[1][1]
-
+        # Adiciona vértice ao grafo
         graph.add_edge(prod_input, prod_output)
     return graph
 
@@ -160,7 +162,9 @@ def createGraph(glud):
 def isLanguageInfinite(glud):
     G = createGraph(glud)
     try:
+        # Tenta encontrar um ciclo no grafo
         nx.find_cycle(G)
         return True
     except:
+        # Se não encontrar, a linguagem é finita
         return False
