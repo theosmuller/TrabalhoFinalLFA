@@ -1,5 +1,5 @@
 from distutils.command.clean import clean
-from glud import get_GLUD_from_file, read_words_from_file, validate_list, validate_word, isLanguageInfinite
+from glud import get_GLUD_from_file, read_words_from_file, validate_list, isLanguageInfinite
 from afd import afd_from_glud, afne_plus_graph
 import os
 
