@@ -4,24 +4,28 @@ from typing import List, NamedTuple
 import networkx as nx
 import re
 
+
 class GludDefinition(NamedTuple):
     name: str
     variables: List[str]
     terminals: List[str]
     initialSymbol: str
 
+
 class Production(NamedTuple):
     input: str
     output: List[str]
+
 
 class Glud(NamedTuple):
     gludDefinition: GludDefinition
     productions: List[Production]
 
+
 def get_GLUD_from_file(filename):
     try:
         with open(filename, 'r', encoding='utf8') as input:
-        #primeira linha é a definição da glud
+            # primeira linha é a definição da glud
             firstLine = input.readline()
 
             '''segunda linha é o prod, ignora'''
@@ -34,14 +38,13 @@ def get_GLUD_from_file(filename):
             for line in input:
                 productions.append(get_production(line, definition.variables))
 
-
             return Glud(
                 definition,
                 productions
-                )
+            )
     except:
         print("Failed to read glud from file")
-    
+
 
 '''
 PARSE da definição da GLUD
@@ -50,35 +53,37 @@ depois as variáveis (tudo entre chaves)
 depois os terminais (tudo entre chaves mas com uma virgula antes, aka segunda chaves)
 depois o simbolo inicial ()
 '''
+
+
 def parse_first_line(line):
     line = line.replace(' ', '')
 
     gludName = line.split('=')[0]
 
-    variables = re.search('{(.*?)}', line)[0].replace('{','').replace('}','').split(',')
+    variables = re.search(
+        '{(.*?)}', line)[0].replace('{', '').replace('}', '').split(',')
 
-    terminals = re.search(',{(.*?)}', line)[0].replace(',{','').replace('}','').split(',')
+    terminals = re.search(
+        ',{(.*?)}', line)[0].replace(',{', '').replace('}', '').split(',')
 
-    initialSymbol = re.search(',(.1?)\)', line)[0].replace(',','').replace(')','')
+    initialSymbol = re.search(',(.1?)\)', line)[0].replace(
+        ',', '').replace(')', '')
 
     return GludDefinition(
-            name = gludName,
-            variables = variables,
-            terminals = terminals,
-            initialSymbol = initialSymbol
-        )
+        name=gludName,
+        variables=variables,
+        terminals=terminals,
+        initialSymbol=initialSymbol
+    )
+
 
 def get_production(line, variables):
-    '''
-    production = {
-        "input" : line[0],
-        "output" : line.replace(' ','').replace('\n','').split('>')[1]
-        }
-    '''
     return Production(
-        input = line[0],
-        output = replace_empty(line.replace(' ','').replace('\n','').split('>')[1], variables)
+        input=line[0],
+        output=replace_empty(line.replace(' ', '').replace(
+            '\n', '').split('>')[1], variables)
     )
+
 
 def replace_empty(productionOutput, variables):
     if len(productionOutput) < 2:
@@ -88,7 +93,6 @@ def replace_empty(productionOutput, variables):
             return (("λ")+productionOutput)
         return (productionOutput+("λ"))
     return productionOutput
-        
 
 
 def validate_word(word, glud):
@@ -105,10 +109,12 @@ se alguma dessas chamadas for a ultima letra e o resultado for um vazio
 retorna TRUE
 se não avançar o suficiente vai retornar false
 '''
+
+
 def word_validation_recursive(word, glud, currentState):
     for production in glud.productions:
         if ((word == '' and production.output[1] == "λ" and production.input == currentState)
-            or(word == '' and production.output[1] == currentState and production.output[0] == "λ")):
+                or (word == '' and production.output[1] == currentState and production.output[0] == "λ")):
             return True
         if (not(word == '')):
             if (production.input == currentState and production.output[0] == word[0]):
@@ -119,7 +125,7 @@ def word_validation_recursive(word, glud, currentState):
                 if(word_validation_recursive(word[1:], glud, currentState)):
                     return True
     return False
-        
+
 
 def validate_list(words, glud):
     acceptedwords = []
@@ -127,6 +133,7 @@ def validate_list(words, glud):
         if validate_word(word, glud):
             acceptedwords.append(word)
     return acceptedwords
+
 
 def read_words_from_file(file):
     words = []
@@ -138,7 +145,7 @@ def read_words_from_file(file):
         print("failed reading word file")
 
 
-# Uma linguagem é infinita quando apresenta ciclos em seu grafo, portanto se existir pelo menos um ciclo em seu grafo, ela será infinita.
+# Uma linguagem é infinita quando apresenta algum ciclo em seu grafo.
 
 def createGraph(glud):
     graph = nx.DiGraph()
