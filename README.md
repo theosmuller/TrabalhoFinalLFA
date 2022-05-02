@@ -49,3 +49,7 @@ yarg==0.1.9
 2\. No terminal, executar o seguinte comando:
 
     pip install -r required.txt
+
+3\. Rodar *main.py*
+
+4\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
