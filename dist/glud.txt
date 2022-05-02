@@ -1,0 +1,29 @@
+IceCreamMachine=({S,O,A,B,C,T},{u,v,w,1,2,3,c,k,m,s,l,*,(,|,p,+,.},prod,S)
+prod
+S -> uO
+S -> vO
+S -> wO
+O -> 1A
+O -> 2B
+O -> 3C
+A -> cT
+A -> kT
+A -> mT
+A -> sT
+A -> lT
+B -> cA
+B -> kA
+B -> mA
+B -> sA
+B -> lA
+C -> cB
+C -> kB
+C -> mB
+C -> sB
+C -> lB
+T -> *T
+T -> (T
+T -> pT
+T -> |T
+T -> +S
+T -> .
