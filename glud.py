@@ -1,3 +1,4 @@
+from encodings import utf_8
 from threading import currentThread
 from typing import List, NamedTuple
 import re
@@ -17,26 +18,29 @@ class Glud(NamedTuple):
     productions: List[Production]
 
 def get_GLUD_from_file(filename):
+    try:
+        with open(filename, 'r', encoding='utf8') as input:
+        #primeira linha é a definição da glud
+            firstLine = input.readline()
+
+            '''segunda linha é o prod, ignora'''
+            prod = input.readline()
+
+            productions = []
+            '''pega o conteúdo da primeira linha e encaixa no GludDefinition'''
+            definition = parse_first_line(firstLine)
+
+            for line in input:
+                productions.append(get_production(line, definition.variables))
+
+
+            return Glud(
+                definition,
+                productions
+                )
+    except:
+        print("Failed to read glud from file")
     
-    with open(filename, 'r', encoding='utf8') as input:
-        '''primeira linha é a definição da glud'''
-        firstLine = input.readline()
-
-        '''segunda linha é o prod, ignora'''
-        prod = input.readline()
-
-        productions = []
-        '''pega o conteúdo da primeira linha e encaixa no GludDefinition'''
-        definition = parse_first_line(firstLine)
-
-        for line in input:
-            productions.append(get_production(line, definition.variables))
-
-
-        return Glud(
-            definition,
-            productions
-            )
 
 '''
 PARSE da definição da GLUD
@@ -123,4 +127,11 @@ def validate_list(words, glud):
             acceptedwords.append(word)
     return acceptedwords
 
-            
+def read_words_from_file(file):
+    words = []
+    try:
+        with open(file, 'r', encoding='utf_8') as input:
+            words = input.read().splitlines()
+        return words
+    except:
+        print("failed reading word file")
