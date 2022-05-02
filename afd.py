@@ -206,7 +206,6 @@ def afd_convert_and_graph(afne):
                         afdGraph.attr('node', shape='circle')
                     afdGraph.node(afne.getStateName(list(toState)))
     
-                # Adding edge between from state and to state
                 afdGraph.edge(afne.getStateName(currentState),
                         afne.getStateName(list(toState)),
                         label=afne.alphabet[symbol])
@@ -295,5 +294,5 @@ def afd_convert_and_graph(afne):
 # depois acrescenta as transições faltantes
 # para tratar todos os simbolos do alfabeto    
 def afne_to_afd(afne):
-    afd = afd_convert_and_graph(afne)
+    afd_convert_and_graph(afne)
 
