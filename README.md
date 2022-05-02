@@ -8,6 +8,16 @@
 #### Yasmin K. Beer Zebrowski
 
 ---
+## Como usar
+1\. Baixar o [Graphviz](https://graphviz.org/download/)
+
+2\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
+
+3\. Rodar *main.exe*
+
+4\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
+
+---
 ## Bibliotecas utilizadas
 
 certifi==2021.10.8
@@ -33,12 +43,6 @@ requests==2.27.1
 urllib3==1.26.9
 
 yarg==0.1.9
-
----
-## Rodar o .exe
-1\. Baixar o [Graphviz](https://graphviz.org/download/)
-
-2\. Rodar *main.exe* da pasta **dist**
 
 ---
 ## Rodar o fonte na máquina
