@@ -82,7 +82,7 @@ def get_production(line, variables):
 def replace_empty(productionOutput, variables):
     if len(productionOutput) < 2:
         if len(productionOutput) < 1:
-            return ("λ"+"λ")
+            return ('λ'+'λ')
         if (productionOutput in variables):
             return (("λ")+productionOutput)
         return (productionOutput+("λ"))

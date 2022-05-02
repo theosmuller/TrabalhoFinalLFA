@@ -108,43 +108,13 @@ def stateIsFinal(outputState):
     return False
 
 
-'''
-def clean_afd(afnInitialState, transitions, alphabet):
-    states = []
-    states.append("qf")
-    for transition in transitions:
-        if transition.output == afnInitialState:
-            transitions = list(filter(lambda val: val != transition, transitions))
-        if transition.input.currentState not in states:
-            states.append(transition.input.currentState)
-    for state in states:
-        for symbol in alphabet:
-            if not any(transition.input.inputSymbol == symbol and transition.input.currentState == state for transition in transitions):
-                transitions.append(
-                    Delta(
-                        input =  DeltaInput(
-                            currentState = state,
-                            inputSymbol = symbol
-                        ),
-                        output = state
-                    )
-                )
-    cleanTransitions = set()
-    cleanTransitions.update(transitions)
-    return FA(
-        states = states,
-        inputSymbols = alphabet,
-        programFunction = sorted(cleanTransitions),
-        initialState = empty_closure(afnInitialState, transitions)
-    )
 
-'''
 # recebe: 
 # lista de estados (vai ser chamado com o estado inicial do AFV)
 # função programa (todas as transições do AFV)
 # alfabeto (simbolos)
 #  
-# DEVERIA:
+# faz:
 # fazer o fecho fazio do estado 
 # para cada simbolo do alfabeto :
 # encontrar as transições desse fecho vazio
@@ -154,39 +124,35 @@ def clean_afd(afnInitialState, transitions, alphabet):
 # quando n tem transições retorna a lista do afd
 
 def afd_convert_and_graph(afne):
-    '''transitions = []
-    newInitialState = empty_closure(states, programFunction) 
-    reachedStatesAndSymbols = []
-    reachedStates = []'''
+
     ec_program_function = dict()
 
     afdGraph = Digraph()
 
-
+    #faz o fecho vazio de todos os estados para não ter que refazer durante a construçõa do afd
     for state in afne.states:
-        ec_program_function[state] = afne.empty_closure(state)
+        ec_program_function[state] = list(afne.empty_closure(state))
     
-    afdStack = []
-    afdStack.append(afne.empty_closure(afne.initialState))
-    afdStates = []
-    afdStates.append(afne.empty_closure(afne.initialState))
+    afdStack = list()
+    afdStack.append(ec_program_function[afne.initialState])
+    
 
-    if (afne.isFinalAFD(afdStack[0])):
-        afdGraph.attr('node', shape='doublecircle')
-    else:
-        afdGraph.attr('node', shape='circle')
+    #Adiciona o estado inicial ao grafo com uma seta vazia para indicar que é inicial
+    afdGraph.attr('node', shape='circle')
     afdGraph.node(afne.getStateName(afdStack[0]))
-
     afdGraph.attr('node', shape='none')
     afdGraph.node('')
     afdGraph.edge('', afne.getStateName(afdStack[0]))
+    
+    afdStates = list()
+    afdStates.append(ec_program_function[afne.initialState])
 
 
 
-    while(len(afdStack) > 0):
+    while (len(afdStack) > 0):
         currentState = afdStack.pop(0)
 
-        for symbol in range (afne.alphabetCount):
+        for symbol in range ((afne.alphabetCount)-1):
             fromClosure = set()
             for x in currentState:
                 fromClosure.update(set(afne.transition_table[str(x)+str(symbol)]))
