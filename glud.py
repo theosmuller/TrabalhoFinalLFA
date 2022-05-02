@@ -1,6 +1,7 @@
 from encodings import utf_8
 from threading import currentThread
 from typing import List, NamedTuple
+import networkx as nx
 import re
 
 class GludDefinition(NamedTuple):
@@ -135,3 +136,24 @@ def read_words_from_file(file):
         return words
     except:
         print("failed reading word file")
+
+
+# Uma linguagem é infinita quando apresenta ciclos em seu grafo, portanto se existir pelo menos um ciclo em seu grafo, ela será infinita.
+
+def createGraph(glud):
+    graph = nx.DiGraph()
+    for production in glud.productions:
+        prod_input = production[0]
+        prod_output = production[1][1]
+
+        graph.add_edge(prod_input, prod_output)
+    return graph
+
+
+def isLanguageInfinite(glud):
+    G = createGraph(glud)
+    try:
+        nx.find_cycle(G)
+        return True
+    except:
+        return False
