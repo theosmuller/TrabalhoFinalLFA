@@ -10,20 +10,40 @@
 ---
 ## Bibliotecas utilizadas
 
-*networkx* para criação de grafos
+certifi==2021.10.8
 
-*graphviz* para visualização de grafos
+charset-normalizer==2.0.12
+
+docopt==0.6.2
+
+graphviz==0.20
+
+idna==3.3
+
+networkx==2.8
+
+pipreqs==0.4.11
+
+pydot==1.4.2
+
+pyparsing==3.0.8
+
+requests==2.27.1
+
+urllib3==1.26.9
+
+yarg==0.1.9
+
+---
+## Rodar o .exe
+1\. Baixar o [Graphviz](https://graphviz.org/download/)
+
+2\. Rodar *main.exe* da pasta **dist**
 
 ---
 ## Rodar o fonte na máquina
 1\. Baixar o [Graphviz](https://graphviz.org/download/)
 
-2\. No terminal, executar os seguintes comandos:
+2\. No terminal, executar o seguinte comando:
 
-    pip install networkx
-
-    pip install graphviz
-
-
-
-
+    pip install -r required.txt
