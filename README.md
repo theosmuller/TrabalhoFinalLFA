@@ -8,12 +8,26 @@
 #### Yasmin K. Beer Zebrowski
 
 ---
+## Rodar o fonte na máquina
+1\. Baixar o [Graphviz](https://graphviz.org/download/)
+
+2\. No terminal, executar o seguinte comando:
+
+    pip install -r required.txt
+
+3\. Rodar *main.py*
+
+4\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
+
+5\. Quando o programa pedir o nome do arquivo, escrever no formato *nome.txt*
+
+---
 ## Como usar
 1\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
 
 2\. Rodar *main.exe*
 
-3\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
+3\. Quando o programa pedir o nome do arquivo, escrever no formato *nome.txt*
 
 ---
 ## Bibliotecas utilizadas
@@ -42,14 +56,3 @@ urllib3==1.26.9
 
 yarg==0.1.9
 
----
-## Rodar o fonte na máquina
-1\. Baixar o [Graphviz](https://graphviz.org/download/)
-
-2\. No terminal, executar o seguinte comando:
-
-    pip install -r required.txt
-
-3\. Rodar *main.py*
-
-4\. Quando o programa pedir o nome do arquivo, escrever no formato *\nome.txt*
