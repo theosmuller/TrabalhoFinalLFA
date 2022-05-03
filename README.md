@@ -5,7 +5,7 @@
 #### Prof. Lucio Mauro Duarte
 
 #### Théo Santiago Müller
-#### Yasmin K. Beer Zebrowski
+#### Yasmin Katerine Beer Zebrowski
 
 ---
 ## Rodar o fonte na máquina
@@ -25,7 +25,7 @@
 ## Como usar
 1\. Arquivos *.txt* devem estar na mesma pasta que *main.exe*
 
-2\. Rodar *main.exe*
+2\. Rodar *main.exe* na pasta **dist**
 
 3\. Quando o programa pedir o nome do arquivo, escrever no formato *nome.txt*
 
